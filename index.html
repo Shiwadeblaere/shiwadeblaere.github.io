@@ -3,114 +3,273 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ZX4RR</title>
+<title>Shiwa Deblaere</title>
+
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-html,body{
-height:100%;
-overflow:hidden;
-background:#020202;
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
+
+html,
+body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:#000;
+}
+
+body{
+    perspective:2200px;
+}
+
 .scene{
-position:relative;
-width:100vw;
-height:100vh;
-overflow:hidden;
-perspective:1400px;
-transform-style:preserve-3d;
-background:
-radial-gradient(circle at center,#0b0b0b 0%,#000 70%);
+    position:relative;
+    width:100vw;
+    height:100vh;
+    overflow:hidden;
+    transform-style:preserve-3d;
 }
 
 .layer{
-position:absolute;
-inset:-10%;
-will-change:transform;
+    position:absolute;
+    inset:-8%;
+    background:url('scene.png') center center / cover no-repeat;
+    will-change:transform;
 }
 
-.bg{
-background:
-radial-gradient(circle at 50% 50%,rgba(0,255,120,.15),transparent 40%),
-radial-gradient(circle at 20% 20%,rgba(0,120,255,.08),transparent 30%);
-filter:blur(40px);
+/* Background */
+.back{
+    filter:brightness(.8);
+    transform:scale(1.1);
 }
 
-.glow{
-background:
-radial-gradient(circle at center,rgba(0,255,100,.25),transparent 35%);
-filter:blur(80px);
+/* Main layer */
+.mid{
 }
 
-.bike-wrap{
-display:flex;
-justify-content:center;
-align-items:center;
+/* Foreground */
+.foreground{
+    filter:none;
 }
 
-.bike{
-width:min(900px,90vw);
-max-height:92vh;
-object-fit:contain;
-filter:drop-shadow(0 50px 80px rgba(0,0,0,.8));
+/* Fog */
+.fog{
+    position:absolute;
+    inset:-20%;
+    pointer-events:none;
+
+    background:
+        radial-gradient(
+            circle at 30% 40%,
+            rgba(255,255,255,.15),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 70% 55%,
+            rgba(255,255,255,.12),
+            transparent 35%
+        );
 }
 
-.particles{
-background-image:
-radial-gradient(circle,rgba(0,255,120,.8) 1px,transparent 2px);
-background-size:120px 120px;
-opacity:.35;
+/* Vignette */
+.vignette{
+    position:absolute;
+    inset:0;
+
+    background:
+        radial-gradient(
+            circle,
+            transparent 45%,
+            rgba(0,0,0,.55) 100%
+        );
+
+    pointer-events:none;
+}
+
+/* Motion permission button */
+.permission{
+    position:absolute;
+    bottom:20px;
+    left:50%;
+    transform:translateX(-50%);
+
+    padding:12px 20px;
+
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.15);
+
+    background:rgba(0,0,0,.5);
+    color:white;
+
+    cursor:pointer;
 }
 </style>
 </head>
 <body>
 
-<div class="scene" id="scene">
-    <div class="layer bg" data-depth="8"></div>
-    <div class="layer particles" data-depth="25"></div>
-    <div class="layer glow" data-depth="15"></div>
+<div class="scene">
 
-    <div class="layer bike-wrap" data-depth="45">
-        <img src="bike.png" class="bike" alt="Bike">
-    </div>
+    <div class="layer back" data-depth="12"></div>
+
+    <div class="layer mid" data-depth="35"></div>
+
+    <div class="layer foreground" data-depth="60"></div>
+
+    <div class="fog" id="fog"></div>
+
+    <div class="vignette"></div>
+
+    <button id="gyroBtn" class="permission">
+        Enable Motion
+    </button>
+
 </div>
 
 <script>
-const scene = document.getElementById("scene");
-const layers = document.querySelectorAll("[data-depth]");
+const layers = document.querySelectorAll('[data-depth]');
 
-function update(x,y){
-    layers.forEach(layer=>{
+let targetX = 0;
+let targetY = 0;
+
+let currentX = 0;
+let currentY = 0;
+
+/* Smooth movement */
+function animate(){
+
+    currentX += (targetX - currentX) * 0.06;
+    currentY += (targetY - currentY) * 0.06;
+
+    layers.forEach(layer => {
+
         const depth = parseFloat(layer.dataset.depth);
-        const moveX = x * depth;
-        const moveY = y * depth;
 
         layer.style.transform =
-            `translate3d(${moveX}px,${moveY}px,0)
-             rotateY(${x*8}deg)
-             rotateX(${-y*8}deg)`;
+        `
+        translate3d(
+            ${currentX * depth}px,
+            ${currentY * depth}px,
+            0
+        )
+        rotateY(${currentX * 8}deg)
+        rotateX(${-currentY * 8}deg)
+        scale(${1 + depth / 600})
+        `;
+
     });
+
+    requestAnimationFrame(animate);
 }
 
-document.addEventListener("mousemove",(e)=>{
-    const x=(e.clientX/window.innerWidth-.5);
-    const y=(e.clientY/window.innerHeight-.5);
-    update(x,y);
+animate();
+
+/* Update target position */
+function setPosition(x,y){
+
+    targetX = x;
+    targetY = y;
+}
+
+/* Mouse */
+document.addEventListener('mousemove', e => {
+
+    setPosition(
+        (e.clientX / innerWidth) - 0.5,
+        (e.clientY / innerHeight) - 0.5
+    );
+
 });
 
-document.addEventListener("touchmove",(e)=>{
-    const t=e.touches[0];
-    const x=(t.clientX/window.innerWidth-.5);
-    const y=(t.clientY/window.innerHeight-.5);
-    update(x,y);
-},{passive:true});
+/* Touch */
+document.addEventListener('touchmove', e => {
 
-if(window.DeviceOrientationEvent){
-    window.addEventListener("deviceorientation",(e)=>{
-        const x=Math.max(-1,Math.min(1,(e.gamma||0)/25));
-        const y=Math.max(-1,Math.min(1,(e.beta||0)/25));
-        update(x,y);
-    });
+    const t = e.touches[0];
+
+    setPosition(
+        (t.clientX / innerWidth) - 0.5,
+        (t.clientY / innerHeight) - 0.5
+    );
+
+},{
+    passive:true
+});
+
+/* iPhone motion permission */
+document.getElementById('gyroBtn').onclick = async () => {
+
+    if(
+        typeof DeviceOrientationEvent !== 'undefined' &&
+        typeof DeviceOrientationEvent.requestPermission === 'function'
+    ){
+
+        try{
+
+            const result =
+                await DeviceOrientationEvent.requestPermission();
+
+            if(result === 'granted'){
+                window.addEventListener(
+                    'deviceorientation',
+                    handleGyro
+                );
+            }
+
+        }catch(err){}
+
+    }else{
+
+        window.addEventListener(
+            'deviceorientation',
+            handleGyro
+        );
+    }
+
+    document.getElementById('gyroBtn').remove();
+};
+
+/* Gyroscope */
+function handleGyro(e){
+
+    setPosition(
+
+        Math.max(
+            -1,
+            Math.min(
+                1,
+                (e.gamma || 0) / 25
+            )
+        ),
+
+        Math.max(
+            -1,
+            Math.min(
+                1,
+                (e.beta || 0) / 25
+            )
+        )
+
+    );
 }
+
+/* Floating fog */
+let fogTime = 0;
+
+setInterval(() => {
+
+    fogTime += 0.01;
+
+    document.getElementById('fog').style.transform =
+    `
+    translate(
+        ${Math.sin(fogTime) * 20}px,
+        ${Math.cos(fogTime * 0.7) * 10}px
+    )
+    `;
+
+},16);
+
 </script>
 
 </body>
