@@ -1,275 +1,117 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Parallax Bike</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{
+height:100%;
+overflow:hidden;
+background:#020202;
+}
+.scene{
+position:relative;
+width:100vw;
+height:100vh;
+overflow:hidden;
+perspective:1400px;
+transform-style:preserve-3d;
+background:
+radial-gradient(circle at center,#0b0b0b 0%,#000 70%);
+}
 
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    
- <!-- Open Graph tags -->
-      <meta property="og:type" content="profile" />
-      <meta property="og:title" content="Shiwa Deblaere" />
-      <meta property="og:description" content="Illustrator and Concept artist from Ghent, Belgium." />
-      <meta property="og:url" content="http://www.shiwadeblaere.com" />
-      <meta property="og:image" content="http://www.shiwadeblaere.com/img/shipcrash.jpg" />
-      <meta property="profile:first_name" content="Shiwa" />
-      <meta property="profile:last_name" content="Deblaere"/>
+.layer{
+position:absolute;
+inset:-10%;
+will-change:transform;
+}
 
-  <title>"Shiwa Deblaere - Concept Artist - Illustrator from Ghent, Belgium"</title>
+.bg{
+background:
+radial-gradient(circle at 50% 50%,rgba(0,255,120,.15),transparent 40%),
+radial-gradient(circle at 20% 20%,rgba(0,120,255,.08),transparent 30%);
+filter:blur(40px);
+}
 
-  <!-- Custom fonts for this theme -->
-  <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
-  <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+.glow{
+background:
+radial-gradient(circle at center,rgba(0,255,100,.25),transparent 35%);
+filter:blur(80px);
+}
 
-  <!-- Theme CSS -->
-  <link href="css/shiwadeblaere.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css" integrity="sha256-46qynGAkLSFpVbEBog43gvNhfrOj+BmwXdxFgVK/Kvc=" crossorigin="anonymous" />  
-    
-   <!-- Icon --> 
-    
-<link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png">
-<link rel="apple-touch-icon" sizes="60x60" href="/apple-icon-60x60.png">
-<link rel="apple-touch-icon" sizes="72x72" href="/apple-icon-72x72.png">
-<link rel="apple-touch-icon" sizes="76x76" href="/apple-icon-76x76.png">
-<link rel="apple-touch-icon" sizes="114x114" href="/apple-icon-114x114.png">
-<link rel="apple-touch-icon" sizes="120x120" href="/apple-icon-120x120.png">
-<link rel="apple-touch-icon" sizes="144x144" href="/apple-icon-144x144.png">
-<link rel="apple-touch-icon" sizes="152x152" href="/apple-icon-152x152.png">
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-icon-180x180.png">
-<link rel="icon" type="image/png" sizes="192x192"  href="/android-icon-192x192.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-<link rel="manifest" href="/manifest.json">
-<meta name="msapplication-TileColor" content="#ffffff">
-<meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
-<meta name="theme-color" content="#ffffff">  
-    
+.bike-wrap{
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.bike{
+width:min(900px,90vw);
+max-height:92vh;
+object-fit:contain;
+filter:drop-shadow(0 50px 80px rgba(0,0,0,.8));
+}
+
+.particles{
+background-image:
+radial-gradient(circle,rgba(0,255,120,.8) 1px,transparent 2px);
+background-size:120px 120px;
+opacity:.35;
+}
+</style>
 </head>
+<body>
 
-<body id="page-top">
-<header></header>
-  <!-- Navigation -->
-  <nav class="navbar navbar-expand-lg bg-secondary text-uppercase fixed-top" id="mainNav">
-    <div class="container">   <!-- #page-top -->
-      <a class="navbar-brand js-scroll-trigger" href="#about">Shiwa Deblaere</a>
-      <button class="navbar-toggler navbar-toggler-right text-uppercase font-weight-bold bg-primary text-white rounded" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-        
-        <i class="fas fa-bars"></i>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarResponsive">
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item mx-0 mx-lg-1">
-            <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#portfolio">Portfolio</a>
-          </li>
-          <li class="nav-item mx-0 mx-lg-1">
-            <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#about">About</a>
-          </li>
-            <!-- contact button
-          <li class="nav-item mx-0 mx-lg-1">
-            <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#contact">Contact</a> 
-          </li>
-            -->
-        </ul>
-      </div>
+<div class="scene" id="scene">
+    <div class="layer bg" data-depth="8"></div>
+    <div class="layer particles" data-depth="25"></div>
+    <div class="layer glow" data-depth="15"></div>
+
+    <div class="layer bike-wrap" data-depth="45">
+        <img src="bike.png" class="bike" alt="Bike">
     </div>
-  </nav>
+</div>
 
+<script>
+const scene = document.getElementById("scene");
+const layers = document.querySelectorAll("[data-depth]");
 
-    
-  <!--  MAIN Image -->
-  <section class="page-section portfolio" id="portfolio">
-    <div class="container">
+function update(x,y){
+    layers.forEach(layer=>{
+        const depth = parseFloat(layer.dataset.depth);
+        const moveX = x * depth;
+        const moveY = y * depth;
 
-    <div class="row bg-faded">
-        <div class="col mx-auto text-center">
-            <a data-fancybox="gallery" href="img/shipcrash.jpg"><img class="img-fluid"  src="img/shipcrash.jpg" /></a>
-            <p class="disc mb-0">Environment Illustration for a personal project</p>
-        </div>
-    </div>
-        <!-- Icon Divider -->
-        <div class="divider-custom divider-light">
-            <div class="divider-custom-line"></div>
-        </div>
-        
-      </div>    
- </section>
-    
-     <!--  Alisa v2 Image -->
-  <section class="page-section portfolio" id="portfolio">
-    <div class="container">
+        layer.style.transform =
+            `translate3d(${moveX}px,${moveY}px,0)
+             rotateY(${x*8}deg)
+             rotateX(${-y*8}deg)`;
+    });
+}
 
-    <div class="row bg-faded">
-        <div class="col mx-auto text-center">
-            <a data-fancybox="gallery" href="img/alisafinsm.jpg"><img class="img-fluid"  src="img/alisafinsm.jpg" /></a>
-            <p class="disc mb-0">Art for Alisa game</p>
-        </div>
-    </div>
-        <!-- Icon Divider -->
-        <div class="divider-custom divider-light">
-            <div class="divider-custom-line"></div>
-        </div>
-        
-      </div>    
- </section> 
-    
-       <!-- 1x IMAGE -->
-  <section class="page-section2 portfolio" id="portfolio">
-    <div class="container">
+document.addEventListener("mousemove",(e)=>{
+    const x=(e.clientX/window.innerWidth-.5);
+    const y=(e.clientY/window.innerHeight-.5);
+    update(x,y);
+});
 
-    <div class="row bg-faded">
-        <div class="col mx-auto text-center">
-            
-            <a data-fancybox="gallery" href="img/gastswamp.jpg"><img class="img-fluid"  src="img/gastswamp.jpg" /></a>
-              
-             <!-- center this image within the column -->
-            <p class="disc mb-0">Environment Illustration for a personal project</p>
-        
-        </div>
-    </div>
-        <!-- Icon Divider -->
-        <div class="divider-custom divider-light">
-            <div class="divider-custom-line"></div>
-        </div>
-        
-      </div>
-  </section>   
-    
-    
-    
-      <!-- 3x IMAGE -->
-  <section class="page-section2 portfolio" id="portfolio">
-    <div class="container">
+document.addEventListener("touchmove",(e)=>{
+    const t=e.touches[0];
+    const x=(t.clientX/window.innerWidth-.5);
+    const y=(t.clientY/window.innerHeight-.5);
+    update(x,y);
+},{passive:true});
 
-      <div class="row bg-faded">
-        <div class="col-lg-4 mx-auto text-center">
-          <a data-fancybox="gallery" href="img/alisa.jpg"><img class="img-fluid"  src="img/alisa.jpg" /></a>
-            <p class="disc mb-0">Alisa game fanart</p>
-        </div>
-        <div class="col-lg-4 mx-auto text-center">
-          <a data-fancybox="gallery" href="img/aapforest.jpg"><img class="img-fluid"  src="img/aapforest.jpg" /></a> 
-            <p class="disc mb-0">Aap in forest</p>
-        </div>
-        <div class="col-lg-4 mx-auto text-center">
-          <a data-fancybox="gallery" href="img/Lendvared.jpg"><img class="img-fluid"  src="img/Lendvared.jpg" /></a> 
-            <p class="disc mb-0">One of the lendva queens</p>
-        </div>  
-          <p class="mx-auto text-center disc mb-0">Illustrations</p>
-      </div>
-        <!-- Icon Divider -->
-        <div class="divider-custom divider-light">
-            <div class="divider-custom-line"></div>
-        </div>
-        
-      </div>
-  </section>
-   
-    
-      <!-- 2x IMAGE-->
-    
-  <section class="page-section2 portfolio" id="portfolio">
-    <div class="container">
+if(window.DeviceOrientationEvent){
+    window.addEventListener("deviceorientation",(e)=>{
+        const x=Math.max(-1,Math.min(1,(e.gamma||0)/25));
+        const y=Math.max(-1,Math.min(1,(e.beta||0)/25));
+        update(x,y);
+    });
+}
+</script>
 
-      <div class="row bg-faded">
-        <div class="col-lg-6 mx-auto text-center">
-          <a data-fancybox="gallery" href="img/shiprender.jpg"><img class="img-fluid"  src="img/shiprender.jpg" /></a> 
-            <p class="disc mb-0">Ship render</p> 
-        </div>
-        <div class="col-lg-6 mx-auto text-center">
-           <a data-fancybox="gallery" href="img/Lendvared.jpg"><img class="img-fluid"  src="img/Lendvared.jpg" /></a> 
-            <p class="disc mb-0">Lendva queen</p>
-        </div>
-          <p class="mx-auto text-center disc mb-0">Misc</p>
-      </div>
-      </div>
-  </section>    
-    
-
-  <!-- About Section -->
-  <section class="page-section bg-primary text-white mb-0" id="about">
-    <div class="container">
-
-      <!-- About Section Heading -->
-      <h2 class="page-section-heading text-center text-uppercase text-white">About me</h2>
-
-      <!-- Icon Divider -->
-      <div class="divider-custom divider-light">
-        <div class="divider-custom-line"></div>
-      </div>
-
-      <!-- About Section Content -->
-      <div class="row">
-        <div class="col-lg-4 ml-auto">
-          <p class="lead">I'm an Illustrator and Concept Artist from Ghent, Belgium that is currently looking for new opportunities. </p>
-        </div>
-        <div class="col-lg-4 mr-auto">
-          <p class="lead">I’d love to hear about your projects, send me a message and I'll get in touch with you.</p>
-        </div>
-      </div>
-
-      <!-- About Section Button -->
-      <div class="text-center mt-4" id="contact">
-        <a class="btn btn-xl btn-outline-light"  href="mailto:shiwa.deblaere@gmail.com">
-          <i class="fas fa-envelope mr-2"></i>
-          shiwa.deblaere@gmail.com
-        </a>
-      </div>
-
-    </div>
-  </section>
-
-
-  <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes) -->
-  <div class="scroll-to-top d-lg-none position-fixed ">
-    <a class="js-scroll-trigger d-block text-center text-white rounded" href="#page-top">
-      <i class="fa fa-chevron-up"></i>
-    </a>
-  </div>
-
-  
-      
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>          
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js" integrity="sha384-6khuMg9gaYr5AxOqhkVIODVIvm9ynTT5J4V1cfthmT+emCG6yVmEZsRHdxlotUnm" crossorigin="anonymous"></script>          
-<script src="js/jquery.easing.min.js"></script>
-
-
-
-  <!-- Custom scripts for this template -->
-  <script src="js/shiwadeblaere.min.js"></script>
-    
-    <!-- hide navbar
-   <script>
-$(window).on('scroll', function (e) {
-  $('.navbar')[$(window).scrollTop() >= 600 ? 'removeClass' : 'addClass']('fixed-top');
-})
-    </script>
-    -->
-    
-  <!-- Footer -->
-  <footer class="footer text-center">
-    <div class="container">
-      <div class="text-center">
-
-        <!-- Footer Social Icons -->
-        <div class="text-center">
-          <h4 class="text-uppercase mb-4">Follow</h4>
-          <a class="btn btn-outline-light btn-social mx-1" href="https://www.artstation.com/shiwa">
-            <i class="fab fa-fw fa-artstation"></i>
-          </a>
-          <a class="btn btn-outline-light btn-social mx-1" href="https://www.instagram.com/shiwadeblaere/">
-            <i class="fab fa-fw fa-instagram"></i>
-          </a>
-          <a class="btn btn-outline-light btn-social mx-1" href="https://twitter.com/shiwadeblaere">
-            <i class="fab fa-fw fa-twitter"></i>
-          </a>
-        </div>
-          </div>
-        </div>
-   </footer>
-    
-  </body>
-
+</body>
 </html>
