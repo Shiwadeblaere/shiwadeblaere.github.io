@@ -1,276 +1,186 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Shiwa Deblaere</title>
-
-<style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
-html,
-body{
-    width:100%;
-    height:100%;
-    overflow:hidden;
-    background:#000;
-}
-
-body{
-    perspective:2200px;
-}
-
-.scene{
-    position:relative;
-    width:100vw;
-    height:100vh;
-    overflow:hidden;
-    transform-style:preserve-3d;
-}
-
-.layer{
-    position:absolute;
-    inset:-8%;
-    background:url('scene.png') center center / cover no-repeat;
-    will-change:transform;
-}
-
-/* Background */
-.back{
-    filter:brightness(.8);
-    transform:scale(1.1);
-}
-
-/* Main layer */
-.mid{
-}
-
-/* Foreground */
-.foreground{
-    filter:none;
-}
-
-/* Fog */
-.fog{
-    position:absolute;
-    inset:-20%;
-    pointer-events:none;
-
-    background:
-        radial-gradient(
-            circle at 30% 40%,
-            rgba(255,255,255,.15),
-            transparent 30%
-        ),
-        radial-gradient(
-            circle at 70% 55%,
-            rgba(255,255,255,.12),
-            transparent 35%
-        );
-}
-
-/* Vignette */
-.vignette{
-    position:absolute;
-    inset:0;
-
-    background:
-        radial-gradient(
-            circle,
-            transparent 45%,
-            rgba(0,0,0,.55) 100%
-        );
-
-    pointer-events:none;
-}
-
-/* Motion permission button */
-.permission{
-    position:absolute;
-    bottom:20px;
-    left:50%;
-    transform:translateX(-50%);
-
-    padding:12px 20px;
-
-    border-radius:999px;
-    border:1px solid rgba(255,255,255,.15);
-
-    background:rgba(0,0,0,.5);
-    color:white;
-
-    cursor:pointer;
-}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10100f">
+  <meta name="description" content="A collection of moments from Shiwa — motorcycles, rides and everyday life.">
+  <title>Shiwa. — Photo journal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root { color-scheme: dark; --bg:#10100f; --text:#f2f0eb; --muted:#aaa69d; --line:rgba(255,255,255,.13); --accent:#d9c8a5; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; background:var(--bg); color:var(--text); font-family:"DM Sans",sans-serif; }
+    a { color:inherit; }
+    .wrap { width:min(1440px, calc(100% - 64px)); margin:auto; }
+    header { height:74px; display:flex; align-items:center; justify-content:flex-end; border-bottom:1px solid var(--line); }
+    .ig-link { text-decoration:none; color:#c9c5bc; font-size:13px; letter-spacing:.02em; transition:color .2s; }
+    .ig-link:hover { color:white; }
+    .hero { min-height:390px; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:76px 20px 82px; }
+    h1 { margin:0; font-family:Manrope,sans-serif; font-size:clamp(64px,10vw,104px); line-height:1; letter-spacing:-.085em; font-weight:800; }
+    h1 span { color:var(--accent); }
+    .handle { margin:16px 0 28px; color:var(--muted); font-size:15px; }
+    .follow { display:inline-flex; align-items:center; gap:11px; padding:15px 22px; border-radius:3px; background:var(--accent); color:#151411; text-decoration:none; font-size:12px; font-weight:700; letter-spacing:.09em; text-transform:uppercase; transition:transform .2s, background .2s; }
+    .follow:hover { transform:translateY(-2px); background:#eadbc0; }
+    .follow svg { width:17px; height:17px; }
+    .gallery { padding:10px 0 72px; }
+    .grid { columns:3 280px; column-gap:14px; }
+    .photo { display:block; position:relative; width:100%; padding:0; margin:0 0 14px; border:0; background:#1b1b19; cursor:zoom-in; overflow:hidden; break-inside:avoid; text-align:left; }
+    .photo img { display:block; width:100%; height:auto; transition:transform .55s cubic-bezier(.2,.7,.2,1), opacity .3s; }
+    .photo:hover img { transform:scale(1.035); opacity:.82; }
+    .photo-caption { position:absolute; left:0; right:0; bottom:0; padding:34px 16px 15px; color:#fff; font-size:13px; opacity:0; background:linear-gradient(transparent,rgba(0,0,0,.7)); transition:opacity .25s; }
+    .photo:hover .photo-caption, .photo:focus-visible .photo-caption { opacity:1; }
+    footer { border-top:1px solid var(--line); padding:24px 0 34px; color:#77736b; font-size:12px; display:flex; justify-content:space-between; gap:16px; }
+    footer a { text-decoration:none; color:#b8b2a7; }
+    .lightbox { position:fixed; inset:0; z-index:10; display:none; align-items:center; justify-content:center; padding:30px; background:rgba(0,0,0,.93); }
+    .lightbox.open { display:flex; }
+    .lightbox img { max-width:min(94vw,1500px); max-height:88vh; object-fit:contain; }
+    .close { position:absolute; top:20px; right:25px; border:0; background:transparent; color:white; font-size:34px; cursor:pointer; line-height:1; }
+    @media (max-width:700px) {
+      .wrap { width:calc(100% - 32px); }
+      header { height:62px; }
+      .hero { min-height:330px; padding:68px 8px 64px; }
+      .gallery { padding-bottom:48px; }
+      .grid { columns:2 140px; column-gap:8px; }
+      .photo { margin-bottom:8px; }
+      .photo-caption { display:none; }
+      footer { font-size:11px; }
+    }
+    @media (max-width:380px) { .grid { columns:1; } }
+    @media (prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto !important; transition:none !important; } }
+  </style>
 </head>
 <body>
+  <div class="wrap">
+    <header>
+      <a class="ig-link" href="https://www.instagram.com/shiwadeblaere/" target="_blank" rel="noopener noreferrer">Instagram ↗</a>
+    </header>
 
-<div class="scene">
+    <main>
+      <section class="hero" aria-label="Profile">
+        <h1>Shiwa<span>.</span></h1>
+        <p class="handle">@shiwadeblaere</p>
+        <a class="follow" href="https://www.instagram.com/shiwadeblaere/" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+          Follow on Instagram
+        </a>
+      </section>
 
-    <div class="layer back" data-depth="12"></div>
+      <section class="gallery" aria-label="Photo gallery">
+        <div class="grid">
+      <button class="photo" type="button" data-full="images/photo-01.webp" aria-label="Open photo: Night ride">
+        <img src="images/photo-01.webp" alt="Night ride" loading="lazy">
+        <span class="photo-caption">Night ride</span>
+      </button>
+      <button class="photo" type="button" data-full="images/photo-02.webp" aria-label="Open photo: After-dark meet-up">
+        <img src="images/photo-02.webp" alt="After-dark meet-up" loading="lazy">
+        <span class="photo-caption">After-dark meet-up</span>
+      </button>
+      <button class="photo" type="button" data-full="images/photo-03.webp" aria-label="Open photo: The green machine">
+        <img src="images/photo-03.webp" alt="The green machine" loading="lazy">
+        <span class="photo-caption">The green machine</span>
+      </button>
+      <button class="photo" type="button" data-full="images/photo-04.webp" aria-label="Open photo: A day out">
+        <img src="images/photo-04.webp" alt="A day out" loading="lazy">
+        <span class="photo-caption">A day out</span>
+      </button>
+      <button class="photo" type="button" data-full="images/photo-05.webp" aria-label="Open photo: Garage days">
+        <img src="images/photo-05.webp" alt="Garage days" loading="lazy">
+        <span class="photo-caption">Garage days</span>
+      </button>
+      <button class="photo" type="button" data-full="images/photo-06.webp" aria-label="Open photo: Little companion">
+        <img src="images/photo-06.webp" alt="Little companion" loading="lazy">
+        <span class="photo-caption">Little companion</span>
+      </button>
+      <button class="photo" type="button" data-full="images/photo-07.webp" aria-label="Open photo: City meet-up">
+        <img src="images/photo-07.webp" alt="City meet-up" loading="lazy">
+        <span class="photo-caption">City meet-up</span>
+      </button>
+      <button class="photo" type="button" data-full="images/photo-08.webp" aria-label="Open photo: Two wheels, one passion">
+        <img src="images/photo-08.webp" alt="Two wheels, one passion" loading="lazy">
+        <span class="photo-caption">Two wheels, one passion</span>
+      </button>
+      <button class="photo" type="button" data-full="images/photo-09.webp" aria-label="Open photo: Kawasaki details">
+        <img src="images/photo-09.webp" alt="Kawasaki details" loading="lazy">
+        <span class="photo-caption">Kawasaki details</span>
+      </button>
+      <button class="photo" type="button" data-full="images/photo-10.webp" aria-label="Open photo: Roadside stop">
+        <img src="images/photo-10.webp" alt="Roadside stop" loading="lazy">
+        <span class="photo-caption">Roadside stop</span>
+      </button>
+      <button class="photo" type="button" data-full="images/photo-11.webp" aria-label="Open photo: Ride together">
+        <img src="images/photo-11.webp" alt="Ride together" loading="lazy">
+        <span class="photo-caption">Ride together</span>
+      </button>
+      <button class="photo" type="button" data-full="images/photo-12.webp" aria-label="Open photo: At the waterfront">
+        <img src="images/photo-12.webp" alt="At the waterfront" loading="lazy">
+        <span class="photo-caption">At the waterfront</span>
+      </button>
+      <button class="photo" type="button" data-full="images/photo-13.webp" aria-label="Open photo: A closer look">
+        <img src="images/photo-13.webp" alt="A closer look" loading="lazy">
+        <span class="photo-caption">A closer look</span>
+      </button>
+      <button class="photo" type="button" data-full="images/photo-14.webp" aria-label="Open photo: Weekend ride">
+        <img src="images/photo-14.webp" alt="Weekend ride" loading="lazy">
+        <span class="photo-caption">Weekend ride</span>
+      </button>
+      <button class="photo" type="button" data-full="images/photo-15.webp" aria-label="Open photo: Out in the open">
+        <img src="images/photo-15.webp" alt="Out in the open" loading="lazy">
+        <span class="photo-caption">Out in the open</span>
+      </button>
+      <button class="photo" type="button" data-full="images/photo-16.webp" aria-label="Open photo: Late-night lights">
+        <img src="images/photo-16.webp" alt="Late-night lights" loading="lazy">
+        <span class="photo-caption">Late-night lights</span>
+      </button>
+      <button class="photo" type="button" data-full="images/photo-17.webp" aria-label="Open photo: A quiet moment">
+        <img src="images/photo-17.webp" alt="A quiet moment" loading="lazy">
+        <span class="photo-caption">A quiet moment</span>
+      </button>
+      <button class="photo" type="button" data-full="images/photo-18.webp" aria-label="Open photo: The road ahead">
+        <img src="images/photo-18.webp" alt="The road ahead" loading="lazy">
+        <span class="photo-caption">The road ahead</span>
+      </button>
+      <button class="photo" type="button" data-full="images/photo-19.webp" aria-label="Open photo: Good company">
+        <img src="images/photo-19.webp" alt="Good company" loading="lazy">
+        <span class="photo-caption">Good company</span>
+      </button>
+        </div>
+      </section>
+    </main>
 
-    <div class="layer mid" data-depth="35"></div>
+    <footer>
+      <span>© <span id="year"></span> Shiwa.</span>
+      <a href="https://www.instagram.com/shiwadeblaere/" target="_blank" rel="noopener noreferrer">@shiwadeblaere ↗</a>
+    </footer>
+  </div>
 
-    <div class="layer foreground" data-depth="60"></div>
-
-    <div class="fog" id="fog"></div>
-
-    <div class="vignette"></div>
-
-    <button id="gyroBtn" class="permission">
-        Enable Motion
-    </button>
-
-</div>
-
-<script>
-const layers = document.querySelectorAll('[data-depth]');
-
-let targetX = 0;
-let targetY = 0;
-
-let currentX = 0;
-let currentY = 0;
-
-/* Smooth movement */
-function animate(){
-
-    currentX += (targetX - currentX) * 0.06;
-    currentY += (targetY - currentY) * 0.06;
-
-    layers.forEach(layer => {
-
-        const depth = parseFloat(layer.dataset.depth);
-
-        layer.style.transform =
-        `
-        translate3d(
-            ${currentX * depth}px,
-            ${currentY * depth}px,
-            0
-        )
-        rotateY(${currentX * 8}deg)
-        rotateX(${-currentY * 8}deg)
-        scale(${1 + depth / 600})
-        `;
-
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Expanded photo">
+    <button class="close" type="button" aria-label="Close photo">×</button>
+    <img src="" alt="">
+  </div>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    const box = document.getElementById('lightbox');
+    const expanded = box.querySelector('img');
+    document.querySelectorAll('.photo').forEach((button) => {
+      button.addEventListener('click', () => {
+        expanded.src = button.dataset.full;
+        expanded.alt = button.querySelector('img').alt;
+        box.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      });
     });
-
-    requestAnimationFrame(animate);
-}
-
-animate();
-
-/* Update target position */
-function setPosition(x,y){
-
-    targetX = x;
-    targetY = y;
-}
-
-/* Mouse */
-document.addEventListener('mousemove', e => {
-
-    setPosition(
-        (e.clientX / innerWidth) - 0.5,
-        (e.clientY / innerHeight) - 0.5
-    );
-
-});
-
-/* Touch */
-document.addEventListener('touchmove', e => {
-
-    const t = e.touches[0];
-
-    setPosition(
-        (t.clientX / innerWidth) - 0.5,
-        (t.clientY / innerHeight) - 0.5
-    );
-
-},{
-    passive:true
-});
-
-/* iPhone motion permission */
-document.getElementById('gyroBtn').onclick = async () => {
-
-    if(
-        typeof DeviceOrientationEvent !== 'undefined' &&
-        typeof DeviceOrientationEvent.requestPermission === 'function'
-    ){
-
-        try{
-
-            const result =
-                await DeviceOrientationEvent.requestPermission();
-
-            if(result === 'granted'){
-                window.addEventListener(
-                    'deviceorientation',
-                    handleGyro
-                );
-            }
-
-        }catch(err){}
-
-    }else{
-
-        window.addEventListener(
-            'deviceorientation',
-            handleGyro
-        );
+    function closeBox() {
+      box.classList.remove('open');
+      expanded.src = '';
+      document.body.style.overflow = '';
     }
-
-    document.getElementById('gyroBtn').remove();
-};
-
-/* Gyroscope */
-function handleGyro(e){
-
-    setPosition(
-
-        Math.max(
-            -1,
-            Math.min(
-                1,
-                (e.gamma || 0) / 25
-            )
-        ),
-
-        Math.max(
-            -1,
-            Math.min(
-                1,
-                (e.beta || 0) / 25
-            )
-        )
-
-    );
-}
-
-/* Floating fog */
-let fogTime = 0;
-
-setInterval(() => {
-
-    fogTime += 0.01;
-
-    document.getElementById('fog').style.transform =
-    `
-    translate(
-        ${Math.sin(fogTime) * 20}px,
-        ${Math.cos(fogTime * 0.7) * 10}px
-    )
-    `;
-
-},16);
-
-</script>
-
+    box.querySelector('.close').addEventListener('click', closeBox);
+    box.addEventListener('click', (event) => { if (event.target === box) closeBox(); });
+    document.addEventListener('keydown', (event) => { if (event.key === 'Escape') closeBox(); });
+  </script>
 </body>
 </html>
